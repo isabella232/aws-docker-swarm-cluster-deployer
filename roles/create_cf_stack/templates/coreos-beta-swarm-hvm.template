@@ -394,9 +394,14 @@
         "GroupDescription" : "Master CoreOS SecurityGroup",
         "VpcId" : { "Ref" : "Vpc" },
         "SecurityGroupIngress" : [
-          { "IpProtocol" : "tcp", "FromPort" : "0", "ToPort" : "65535", "CidrIp": "10.203.0.0/16" },
           { "IpProtocol" : "tcp", "FromPort" : "22", "ToPort" : "22", "CidrIp" : { "Ref" : "AllowSSHFrom" } },
-          { "IpProtocol" : "tcp", "FromPort" : "4000", "ToPort" : "4000", "CidrIp" : "0.0.0.0/0" }
+          { "IpProtocol" : "tcp", "FromPort" : "4243", "ToPort" : "4243", "CidrIp" : { "Ref" : "AllowSSHFrom" } },
+          { "IpProtocol" : "tcp", "FromPort" : "2375", "ToPort" : "2375", "CidrIp" : { "Ref" : "AllowSSHFrom" } },
+          { "IpProtocol" : "tcp", "FromPort" : "4243", "ToPort" : "4243", "CidrIp" : "0.0.0.0/0" },
+          { "IpProtocol" : "tcp", "FromPort" : "4000", "ToPort" : "4000", "CidrIp" : "0.0.0.0/0" },
+          { "IpProtocol" : "tcp", "FromPort" : "4001", "ToPort" : "4001", "CidrIp" : "0.0.0.0/0" },
+          { "IpProtocol" : "tcp", "FromPort" : "2379", "ToPort" : "2379", "CidrIp" : "0.0.0.0/0" },
+          { "IpProtocol" : "tcp", "FromPort" : "2380", "ToPort" : "2380", "CidrIp" : "0.0.0.0/0" }
         ],
         "SecurityGroupEgress" :  [
           { "IpProtocol" : "tcp", "FromPort" : "1", "ToPort" : "65535", "CidrIp" : "0.0.0.0/0" },
@@ -414,17 +419,123 @@
         "GroupDescription" : "Node CoreOS SecurityGroup",
         "VpcId" : { "Ref" : "Vpc" },
         "SecurityGroupIngress" : [
-          { "IpProtocol" : "tcp", "FromPort" : "22", "ToPort" : "22", "CidrIp" : { "Ref" : "AllowSSHFrom" } },
-          { "IpProtocol" : "tcp", "FromPort" : "0", "ToPort" : "65535", "CidrIp" : "10.203.0.0/16" },
-          { "IpProtocol" : "udp", "FromPort" : "0", "ToPort" : "65535", "CidrIp" : "10.203.0.0/16" }
-        ],
-        "SecurityGroupEgress" :  [
-          { "IpProtocol" : "tcp", "FromPort" : "1", "ToPort" : "65535", "CidrIp" : "0.0.0.0/0" },
-          { "IpProtocol" : "udp", "FromPort" : "1", "ToPort" : "65535", "CidrIp" : "0.0.0.0/0" }
+          { "IpProtocol" : "tcp", "FromPort" : "22", "ToPort" : "22", "CidrIp" : { "Ref" : "AllowSSHFrom" } }
         ],
         "Tags": [
           { "Key" : "Name", "Value" : { "Fn::Join": [ "-", [ { "Ref": "AWS::StackName"}, "Node-SG" ] ] } }
         ]
+      }
+    },
+
+    "NodeIngress4243" : {
+      "DependsOn" : "NodeSecurityGroup",
+      "Type" : "AWS::EC2::SecurityGroupIngress",
+      "Properties" : {
+        "GroupId" : {
+          "Fn::GetAtt" : [ "NodeSecurityGroup", "GroupId" ]
+        },
+        "IpProtocol" : "tcp",
+        "FromPort" : "4243",
+        "ToPort" : "4243",
+        "CidrIp" : "0.0.0.0/0"
+      }
+    },
+
+    "NodeIngress4001" : {
+      "DependsOn" : "NodeSecurityGroup",
+      "Type" : "AWS::EC2::SecurityGroupIngress",
+      "Properties" : {
+        "GroupId" : {
+          "Fn::GetAtt" : [ "NodeSecurityGroup", "GroupId" ]
+        },
+        "IpProtocol" : "tcp",
+        "FromPort" : "4001",
+        "ToPort" : "4001",
+        "CidrIp" : "0.0.0.0/0"
+      }
+    },
+
+    "NodeIngress2379" : {
+      "DependsOn" : "NodeSecurityGroup",
+      "Type" : "AWS::EC2::SecurityGroupIngress",
+      "Properties" : {
+        "GroupId" : {
+          "Fn::GetAtt" : [ "NodeSecurityGroup", "GroupId" ]
+        },
+        "IpProtocol" : "tcp",
+        "FromPort" : "2379",
+        "ToPort" : "2379",
+        "CidrIp" : "0.0.0.0/0"
+      }
+    },
+
+    "NodeIngress2380" : {
+      "DependsOn" : "NodeSecurityGroup",
+      "Type" : "AWS::EC2::SecurityGroupIngress",
+      "Properties" : {
+        "GroupId" : {
+          "Fn::GetAtt" : [ "NodeSecurityGroup", "GroupId" ]
+        },
+        "IpProtocol" : "tcp",
+        "FromPort" : "2380",
+        "ToPort" : "2380",
+        "CidrIp" : "0.0.0.0/0"
+      }
+    },
+
+    "MasterIngress4243" : {
+      "DependsOn" : [ "MasterSecurityGroup", "NodeSecurityGroup" ],
+      "Type" : "AWS::EC2::SecurityGroupIngress",
+      "Properties" : {
+        "GroupId" : {
+          "Fn::GetAtt" : [ "NodeSecurityGroup", "GroupId" ]
+        },
+        "IpProtocol" : "tcp",
+        "FromPort" : "4243",
+        "ToPort" : "4243",
+        "CidrIp" : "0.0.0.0/0"
+      }
+    },
+
+    "MasterIngress4001" : {
+      "DependsOn" : [ "MasterSecurityGroup", "NodeSecurityGroup" ],
+      "Type" : "AWS::EC2::SecurityGroupIngress",
+      "Properties" : {
+        "GroupId" : {
+          "Fn::GetAtt" : [ "NodeSecurityGroup", "GroupId" ]
+        },
+        "IpProtocol" : "tcp",
+        "FromPort" : "4001",
+        "ToPort" : "4001",
+        "CidrIp" : "0.0.0.0/0"
+      }
+    },
+
+    "MasterIngress2379" : {
+      "DependsOn" : [ "MasterSecurityGroup", "NodeSecurityGroup" ],
+      "Type" : "AWS::EC2::SecurityGroupIngress",
+      "Properties" : {
+        "GroupId" : {
+          "Fn::GetAtt" : [ "NodeSecurityGroup", "GroupId" ]
+        },
+        "IpProtocol" : "tcp",
+        "FromPort" : "2379",
+        "ToPort" : "2379",
+        "CidrIp" : "0.0.0.0/0"
+      }
+    },
+
+    "MasterIngress2380" : {
+      "DependsOn" : [ "MasterSecurityGroup", "NodeSecurityGroup" ],
+      "Type" : "AWS::EC2::SecurityGroupIngress",
+      "Properties" : {
+        "GroupId" : {
+          "Fn::GetAtt" : [ "NodeSecurityGroup", "GroupId" ]
+        },
+        "IpProtocol" : "tcp",
+        "FromPort" : "2380",
+        "ToPort" : "2380",
+        "CidrIp" : "0.0.0.0/0"
       }
     },
 
@@ -434,13 +545,44 @@
         "GroupDescription" : "Enable communication with Swarm Masters and Etcd",
         "VpcId" : { "Ref" : "Vpc" },
         "SecurityGroupIngress" : [
-          { "IpProtocol" : "tcp", "FromPort" : "0", "ToPort" : "65535", "CidrIp": "10.203.0.0/16" },
-          { "IpProtocol" : "tcp", "FromPort" : "4000", "ToPort" : "4000", "CidrIp" : "10.203.0.0/16" },
-          { "IpProtocol" : "tcp", "FromPort" : "2379", "ToPort" : "2379", "CidrIp" : "0.0.0.0/0" }
+          {
+            "IpProtocol" : "tcp",
+            "FromPort" : "4000",
+            "ToPort" : "4000",
+            "CidrIp" : "0.0.0.0/0"
+          },
+          {
+            "IpProtocol" : "tcp",
+            "FromPort" : "2379",
+            "ToPort" : "2379",
+            "CidrIp" : "0.0.0.0/0"
+          },
+          {
+            "IpProtocol" : "tcp",
+            "FromPort" : "2375",
+            "ToPort" : "2375",
+            "CidrIp" : "0.0.0.0/0"
+          }
         ],
-        "SecurityGroupEgress" :  [
-          { "IpProtocol" : "tcp", "FromPort" : "1", "ToPort" : "65535", "CidrIp" : "0.0.0.0/0" },
-          { "IpProtocol" : "udp", "FromPort" : "1", "ToPort" : "65535", "CidrIp" : "0.0.0.0/0" }
+          "SecurityGroupEgress" : [ 
+          {
+            "IpProtocol" : "tcp",
+            "FromPort" : "4000",
+            "ToPort" : "4000",
+            "CidrIp" : "0.0.0.0/0"
+          },
+          {
+            "IpProtocol" : "tcp",
+            "FromPort" : "2379",
+            "ToPort" : "2379",
+            "CidrIp" : "0.0.0.0/0"
+          },
+          {
+            "IpProtocol" : "tcp",
+            "FromPort" : "2375",
+            "ToPort" : "2375",
+            "CidrIp" : "0.0.0.0/0"
+          }
         ]
       }
     },
@@ -469,44 +611,6 @@
       }
     },
 
-    "NodeHTTPLoadBalancer" : {
-      "Type" : "AWS::ElasticLoadBalancingV2::LoadBalancer",
-      "DependsOn": ["NodeLoadBalancerSecurityGroup", "PubSubnetAz1", "PubSubnetAz2", "PubSubnetAz3" ],
-      "Properties" : {
-        "Name" : {"Fn::Join" : ["-", ["node-http", { "Ref" : "Vpc" } ]]},
-        "Scheme" : "internet-facing",
-        "SecurityGroups" : [ { "Ref" : "NodeLoadBalancerSecurityGroup" } ],
-        "Subnets" : [{ "Ref" : "PubSubnetAz1" }, { "Ref" : "PubSubnetAz2" }, { "Ref" : "PubSubnetAz3" }]
-      }
-    },
-
-    "NodeHTTPTargetGroup" : {
-      "Type" : "AWS::ElasticLoadBalancingV2::TargetGroup",
-      "Properties" : {
-        "HealthCheckIntervalSeconds" : 60,
-        "UnhealthyThresholdCount" : 10,
-        "HealthCheckPath" : "/health",
-        "Name" : {"Fn::Join" : ["-", ["swarm-nodes-http", { "Ref" : "Vpc" } ]]},
-        "Port" : 80,
-        "Protocol" : "HTTP",
-        "VpcId" : { "Ref": "Vpc" }
-      }
-    },
-
-    "NodeLoadBalancerHTTPListener": {
-      "Type": "AWS::ElasticLoadBalancingV2::Listener",
-      "DependsOn" : ["NodeHTTPLoadBalancer", "NodeHTTPTargetGroup"],
-      "Properties": {
-        "DefaultActions": [{
-          "Type": "forward",
-          "TargetGroupArn": { "Ref": "NodeHTTPTargetGroup" }
-        }],
-        "LoadBalancerArn": { "Ref": "NodeHTTPLoadBalancer" },
-        "Port": "80",
-        "Protocol": "HTTP"
-      }
-    },
-
     "NodeLoadBalancer" : {
       "Type" : "AWS::ElasticLoadBalancing::LoadBalancer",
       "Properties" : {
@@ -522,8 +626,8 @@
           }],
         "HealthCheck" : {
           "Target" : { "Fn::Join" : [ "", ["HTTP:4243", "/info"]]},
-          "HealthyThreshold" : "2",
-          "UnhealthyThreshold" : "5",
+          "HealthyThreshold" : "5",
+          "UnhealthyThreshold" : "3",
           "Interval" : "30",
           "Timeout" : "15"
         }
@@ -610,15 +714,14 @@
 
     "NodeAutoScalingGroup" : {
       "Type" : "AWS::AutoScaling::AutoScalingGroup",
-      "DependsOn" : ["NodeLaunchConfiguration", "NodeLoadBalancer", "NodeHTTPTargetGroup"],
       "Properties" : {
         "AvailabilityZones" :
           [ { "Fn::Select" : [ "0", { "Ref" : "VpcAvailabilityZones" } ] }, { "Fn::Select" : [ "1", { "Ref" : "VpcAvailabilityZones" } ] }, { "Fn::Select" : [ "2", { "Ref" : "VpcAvailabilityZones" } ] } ],
         "VPCZoneIdentifier" : [ { "Fn::Join" : [",", [ { "Ref" : "PrivateSubnetAz1" }, { "Ref" : "PrivateSubnetAz2" }, { "Ref" : "PrivateSubnetAz3" } ] ] } ],
         "LaunchConfigurationName" : { "Ref" : "NodeLaunchConfiguration" },
         "LoadBalancerNames" : [ { "Ref" : "NodeLoadBalancer" } ],
+        "HealthCheckType": "ELB",
         "HealthCheckGracePeriod" : "500",
-        "TargetGroupARNs" : [{ "Ref" : "NodeHTTPTargetGroup" }],
         "MinSize" : "3",
         "MaxSize" : "12",
         "DesiredCapacity" : { "Ref" : "NodeClusterSize" },
@@ -678,7 +781,7 @@
       "Properties": {
         "FileSystemId": { "Ref": "DataStorageFileSystem" },
         "SubnetId": { "Ref": "PubSubnetAz3" },
-        "SecurityGroups": [ { "Ref": "EfsSecurityGroup" } ]
+        "SecurityGroups": [ { "Ref": "EfsSecurityGroup" } ] 
       }
     },
 
@@ -728,9 +831,9 @@
       "Description" : "ELB of Swarm and Etcd Masters",
       "Value" : { "Fn::GetAtt" : [ "MasterLoadBalancer", "DNSName" ] }
     },
-    "NodeHTTPLoadBalancer" : {
+    "NodeLoadBalancer" : {
       "Description" : "Node HTTP load balancer",
-      "Value" : { "Fn::GetAtt" : [ "NodeHTTPLoadBalancer", "DNSName" ] }
+      "Value" : { "Fn::GetAtt" : [ "NodeLoadBalancer", "DNSName" ] }
     }
   }
 
