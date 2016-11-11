@@ -4,6 +4,12 @@
       command: start
     - name: fleet.service
       command: start
+    - name: docker.service
+      drop-ins:
+        - name: 10-docker_opts.conf
+          content: |
+            [Service]
+            Environment=\"DOCKER_OPTS=--cluster-store=etcd://localhost:2379 --cluster-advertise=${{ advertised_ip_address }}_ipv4:4243\"
     - name: docker-swarm.service
       command: start
       content: |
