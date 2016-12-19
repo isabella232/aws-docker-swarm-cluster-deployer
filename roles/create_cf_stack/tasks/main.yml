@@ -27,8 +27,6 @@
     stack_name: "{{ cf_stack_name }}"
     aws_access_key: "{{ aws_access_key }}"
     aws_secret_key: "{{ aws_secret_key }}"
-    ecr_access_key: "{{ ecr_access_key }}"
-    ecr_secret_key: "{{ ecr_secret_key }}"
     template: "cf_template"
     region: "{{ cf_region }}"
     disable_rollback: "{{ cf_disable_rollback }}"

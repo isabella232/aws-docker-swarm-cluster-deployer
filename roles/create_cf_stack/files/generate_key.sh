@@ -68,4 +68,4 @@ if [[ -n $AWS_SECRET_ACCESS_KEY ]]; then
   export AWS_SECRET_ACCESS_KEY
 fi
 
-~/.local/bin/aws ec2 create-key-pair --region $AWS_REGION --keyname $KEY_NAME | jq -r ".KeyMaterial" > ~/.ssh/$KEY_NAME.pem
+~/.local/bin/aws ec2 create-key-pair --region $AWS_REGION --key-name $KEY_NAME | jq -r ".KeyMaterial" > ~/.ssh/$KEY_NAME.pem
