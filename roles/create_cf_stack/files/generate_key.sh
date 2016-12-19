@@ -14,7 +14,7 @@ function usage {
 cat << EOF
 usage: $0 options
 
-This script requests AWS to generate a new key-pair 
+This script requests AWS to generate a new key-pair
 
 OPTIONS:
  -r      AWS Region
@@ -68,4 +68,4 @@ if [[ -n $AWS_SECRET_ACCESS_KEY ]]; then
   export AWS_SECRET_ACCESS_KEY
 fi
 
-aws --region $AWS_REGION ec2 create-key-pair --key-name $KEY_NAME | jq -r ".KeyMaterial" > ~/.ssh/$KEY_NAME.pem
+~/.local/bin/aws ec2 create-key-pair --region $AWS_REGION --keyname $KEY_NAME | jq -r ".KeyMaterial" > ~/.ssh/$KEY_NAME.pem

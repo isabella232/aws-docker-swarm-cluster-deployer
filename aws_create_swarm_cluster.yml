@@ -3,5 +3,7 @@
 # Create a Stack on Cloud Formation or Update if name already exists
 - hosts: localhost
   connection: local
+  vars:
+    ansible_python_interpreter: ".venv/bin/python"
   roles:
   - create_cf_stack

@@ -8,8 +8,8 @@ write_files:
         {\"credsStore\": \"ecr-login\"}
   - path: /etc/profile.d/aws_credential.sh
     content: |
-      export AWS_ACCESS_KEY_ID={{ aws_access_key }}
-      export AWS_SECRET_ACCESS_KEY={{ aws_secret_key }}
+      export AWS_ACCESS_KEY_ID={{ ecr_access_key }}
+      export AWS_SECRET_ACCESS_KEY={{ ecr_secret_key }}
   - path: /etc/systemd/system/docker.service.d/increase-ulimit.conf
     owner: core:core
     permissions: 0644
