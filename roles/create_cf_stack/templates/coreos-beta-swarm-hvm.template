@@ -47,12 +47,6 @@
       "Description" : "Number of Swarm Master instances. Please make it same as the number of AZs."
     },
 
-    "DiscoveryURL" : {
-      "Type" : "String",
-      "Description" : "A unique etcd cluster discovery URL. Grab a new token from https://discovery.etcd.io/new?size=4",
-      "Default" : ""
-    },
-
     "AllowSSHFrom" : {
       "Type" : "String",
       "Description" : "The net block (CIDR) from which SSH and docker on the master are available.",
