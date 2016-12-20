@@ -4,12 +4,6 @@
   script: files/generate_key.sh -r {{ cf_region }} -n {{ cf_stack_name }} -k "{{ aws_access_key }}" -s "{{ aws_secret_key }}"
   ignore_errors: yes
 
-- name: Get a new Discovery Service url
-  uri:
-    url: "https://discovery.etcd.io/new?size={{ cf_master_cluster_size }}"
-    return_content: yes
-  register: discovery_service_url
-
 - set_fact:
     master_cloud_config: "{{ lookup('template', '../templates/master-config-file.yml.j2') | replace('\r\n', '\\n') }}"
     minion_cloud_config: "{{ lookup('template', '../templates/minion-config-file.yml.j2') | replace('\r\n', '\\n') }}"
@@ -36,7 +30,6 @@
       NodeClusterSize: "{{ cf_node_cluster_size }}"
       MasterClusterSize: "{{ cf_master_cluster_size }}"
       KeyName: "{{ cf_stack_name }}"
-      DiscoveryURL: "{{ discovery_service_url.content }}"
       VpcAvailabilityZones: "{{ cf_vpc_azs }}"
       AllowSSHFrom: "{{ ip_address }}"
       NodeHTTPCertARN: "{{ certificate_arn }}"
