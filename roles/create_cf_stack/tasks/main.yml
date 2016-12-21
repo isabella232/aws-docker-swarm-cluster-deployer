@@ -40,7 +40,8 @@
       VpcAvailabilityZones: "{{ cf_vpc_azs }}"
       AllowSSHFrom: "{{ ip_address }}"
       NodeHTTPCertARN: "{{ certificate_arn }}"
-      HostedZone: "{{ parent_domain }}"
+      HostedZone: "{{ hosted_zone_name }}"
+      HostedZoneId: "{{ hosted_zone_id }}"
     tags:
       Stack: "ansible-cloudformation"
   register: stack_creation_response

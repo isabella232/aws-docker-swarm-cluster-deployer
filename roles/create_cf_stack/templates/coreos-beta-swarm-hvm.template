@@ -91,6 +91,10 @@
     "HostedZone" : {
       "Description" : "HostedZone name",
       "Type": "String"
+    },
+    "HostedZoneId" : {
+      "Description" : "HostedZone ID",
+      "Type": "String"
     }
   },
 
@@ -860,9 +864,7 @@
       "Type" : "AWS::Route53::RecordSetGroup",
       "DependsOn" : ["NodeHTTPLoadBalancer", "NodeHTTPTargetGroup"],
       "Properties" : {
-        "HostedZoneName" : {
-          "Fn::Join" : [ "", [ { "Ref" : "HostedZone" }, "." ] ]
-        },
+        "HostedZoneId" : { "Ref" : "HostedZoneId" },
         "Comment" : "DNS for hosted apps.",
         "RecordSets" : [
           {
